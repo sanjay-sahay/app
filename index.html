@@ -1,0 +1,104 @@
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!doctype html>
+<html>
+  <head>
+    <title>Sanjay</title>
+
+<p style="background-color:orange;" id="pos">
+<p style="background-color:white;" id="nifty">
+<p style="background-color:DodgerBlue;" id="p1" onclick="Fu_buy1('p1')" >
+<p style="background-color:DodgerBlue;" id="p2" onclick="Fu_buy1('p2')">
+<p style="background-color:DodgerBlue;" id="p3" onclick="Fu_buy1('p3')">
+<p style="background-color:DodgerBlue;" id="p4" onclick="Fu_buy1('p4')">
+<p style="background-color:DodgerBlue;" id="p5" onclick="Fu_buy1('p5')">
+<p style="background-color:orange;" id="l1" onclick="Fu_buy1('l1')">
+<p style="background-color:orange;" id="l2" onclick="Fu_buy1('l2')">
+<p style="background-color:orange;" id="l3" onclick="Fu_buy1('l3')">
+<p style="background-color:orange;" id="l4" onclick="Fu_buy1('l4')">
+<p style="background-color:orange;" id="l5" onclick="Fu_buy1('l5')">
+</p>
+
+<p style="background-color:green;" id="time"  onclick="Fu_seekdata()" >
+
+<p style="background-color:white;" id="m1">
+</p>
+
+
+    <style>
+      * { margin: 2; padding: 0; box-sizing: border-box; }
+      body { font: 22px Helvetica, Arial; }
+
+      form { background: #000; padding: 15px; position: fixed; bottom: 0; width: 90%; }
+      form input { border: 2; padding: 2px; width: 90%; margin-right: 5%; }
+      form button { width: 20%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+    </style>
+  </head>
+  <body>
+
+   <ul id="messages"></ul>
+
+    <form action="">
+    <input id="cdata" autocomplete="off" /> 
+    <input id="m" autocomplete="off" />
+    <button id = "Send" name="Send">Send</button>
+    <button type = "button" id="foxsend" name = "foxsend" onclick="Fu_foxdata()">Refresh!</button>
+    <form name = "chatform">
+
+   <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <script>
+
+	function Fu_seekdata() {
+   	 var socket = io();
+	 socket.emit('chat message', "$stream");
+	}
+	function Fu_foxdata() {
+   	 var socket = io();
+	 socket.emit('data',$('#cdata').val() );
+	}
+
+	function Fu_buy1(z) {
+         var zz='';
+	 var xbuy = document.getElementById(z).innerHTML;
+         if (z.substr(0, 1) == 'p') {var zz='buy '};
+         if (z.substr(0, 1) == 'l') {var zz='sell '};
+	 if (confirm(zz + " "+xbuy) == true) {
+    	 var socket = io();
+	 socket.emit('action', zz + xbuy);
+         }
+	}
+
+      $(function () {
+        var socket = io();
+        $('form').submit(function(){
+          socket.emit('chat message', $('#m').val());
+          $('#m').val('');
+          return false;
+        });
+
+        socket.on('chat message', function(msg){
+	//$('#messages').append($('<li>').text(msg));
+         // window.scrollTo(0, document.body.scrollHeight);
+        document.getElementById("m1").innerHTML= msg;
+        });
+
+	socket.on('data', function(data){
+	document.getElementById("pos").innerHTML= data.position;
+	document.getElementById("nifty").innerHTML= data.nifty;
+	document.getElementById("p1").innerHTML= data.gain1;
+	document.getElementById("p2").innerHTML= data.gain2;
+	document.getElementById("p3").innerHTML= data.gain3;
+	document.getElementById("p4").innerHTML= data.gain4;
+	document.getElementById("p5").innerHTML= data.gain5;
+	document.getElementById("l1").innerHTML= data.lose1;
+	document.getElementById("l2").innerHTML= data.lose2;
+	document.getElementById("l3").innerHTML= data.lose3;
+	document.getElementById("l4").innerHTML= data.lose4;
+	document.getElementById("l5").innerHTML= data.lose5;
+	document.getElementById("time").innerHTML= data.time;
+        });
+        
+      });
+    </script>
+  </body>
+</html>
